@@ -1,8 +1,22 @@
 ---
-description: Dump the current Zellij session layout as KDL, save it to a file, or restore a layout from a file or KDL string. Useful for snapshotting and recreating workspace configurations.
+description: Create, edit, dump, save, or restore a Zellij layout. Author new layouts in KDL (tabs, panes, splits, commands, plugins, templates), snapshot the current session, or restore a layout from a file or KDL string.
 ---
 
-`$ARGUMENTS` describes what to do — dump, save, or restore a layout. All commands accept an optional `zellij --session <name>` prefix to target a different session.
+`$ARGUMENTS` describes what to do — create, edit, dump, save, or restore a layout. All commands accept an optional `zellij --session <name>` prefix to target a different session.
+
+## Creating or editing a layout
+
+Layouts are written in KDL. **Before writing or modifying a layout, read [`references/layout-kdl.md`](references/layout-kdl.md)** in this skill directory — it documents the KDL syntax (panes, `split_direction`, sizing, commands, `cwd`, plugins, floating panes, and templates) with copyable examples.
+
+Starting points:
+```bash
+zellij setup --dump-layout default > layout.kdl   # default skeleton to edit
+zellij action dump-layout > layout.kdl            # snapshot the current session as a base
+```
+
+Then edit `layout.kdl` and apply it with `override-layout` (below), or launch a new session with it using the `new-session` skill (`--default-layout <layout.kdl>`).
+
+For the complete, authoritative reference see <https://zellij.dev/documentation/creating-a-layout.html>.
 
 ## Dump current layout
 

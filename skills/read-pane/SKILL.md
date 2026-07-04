@@ -1,5 +1,5 @@
 ---
-description: Read the full content (viewport + scrollback) of a specific Zellij pane by its ID. Use session-overview first to find pane IDs. Usage: /zellij-control:read-pane <pane-id> [session-name]
+description: "Read the full content (viewport + scrollback) of a specific Zellij pane by its ID. Use session-overview first to find pane IDs. Usage: /zellij-control:read-pane <pane-id> [session-name]"
 ---
 
 `$ARGUMENTS` is `<pane-id>` optionally followed by a session name (e.g. `terminal_1` or `terminal_1 my-session`). Parse accordingly.

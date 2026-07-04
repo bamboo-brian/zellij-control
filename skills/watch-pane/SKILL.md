@@ -1,5 +1,5 @@
 ---
-description: Watch a Zellij pane in real time using zellij subscribe. Streams pane output as notifications via the Monitor tool. Use when waiting for a long-running command to finish or watching for specific output. Usage: /zellij-control:watch-pane <pane-id> [session-name]
+description: "Watch a Zellij pane in real time using zellij subscribe. Streams pane output as notifications via the Monitor tool. Use when waiting for a long-running command to finish or watching for specific output. Usage: /zellij-control:watch-pane <pane-id> [session-name]"
 ---
 
 `$ARGUMENTS` is `<pane-id>` optionally followed by a session name. Parse accordingly.
