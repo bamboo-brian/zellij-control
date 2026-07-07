@@ -1,6 +1,8 @@
 ---
-description: "Watch a Zellij pane in real time using zellij subscribe. Streams pane output as notifications via the Monitor tool. Use when waiting for a long-running command to finish or watching for specific output. Usage: /zellij-control:watch-pane <pane-id> [session-name]"
+description: "Watch a Zellij pane in real time using zj subscribe. Streams pane output as notifications via the Monitor tool. Use when waiting for a long-running command to finish or watching for specific output. Usage: /zellij-control:watch-pane <pane-id> [session-name]"
 ---
+
+> **Always run `zj`, never `zellij` directly.** `zj` is this plugin's wrapper (shipped in the plugin's `bin/`, already on your `PATH`). It clears Claude Code's `CLAUDE_*` / `CLAUDECODE` environment variables before invoking Zellij, so they are not inherited by the sessions and panes it spawns — otherwise a `claude` launched inside one of those panes would think it is a child process and refuse to keep its own history. The `zj` in the commands below is deliberate; do not substitute `zellij`.
 
 `$ARGUMENTS` is `<pane-id>` optionally followed by a session name. Parse accordingly.
 
@@ -8,12 +10,12 @@ Use the Monitor tool with the following command, piped through `jq` to emit one 
 
 **Current session:**
 ```
-zellij subscribe --pane-id <pane-id> --format json | jq -r --unbuffered 'if .event == "pane_closed" then "CLOSED: \(.pane_id)" else (.viewport | last) end'
+zj subscribe --pane-id <pane-id> --format json | jq -r --unbuffered 'if .event == "pane_closed" then "CLOSED: \(.pane_id)" else (.viewport | last) end'
 ```
 
 **Named session:**
 ```
-zellij --session <session-name> subscribe --pane-id <pane-id> --format json | jq -r --unbuffered 'if .event == "pane_closed" then "CLOSED: \(.pane_id)" else (.viewport | last) end'
+zj --session <session-name> subscribe --pane-id <pane-id> --format json | jq -r --unbuffered 'if .event == "pane_closed" then "CLOSED: \(.pane_id)" else (.viewport | last) end'
 ```
 
 This emits the last line of the pane's viewport on each update — typically where new output appears — and a `CLOSED` message when the pane exits.
@@ -30,7 +32,7 @@ This emits the last line of the pane's viewport on each update — typically whe
 To stop automatically when a pattern is matched (e.g. a build finishes or a server is ready), filter with grep instead:
 
 ```
-zellij subscribe --pane-id <pane-id> --format json | jq -r --unbuffered '.viewport | last' | grep --line-buffered -E "pattern|error|FAILED"
+zj subscribe --pane-id <pane-id> --format json | jq -r --unbuffered '.viewport | last' | grep --line-buffered -E "pattern|error|FAILED"
 ```
 
 The monitor exits when grep's output ends (if using `-m 1` for a single match), signalling completion.

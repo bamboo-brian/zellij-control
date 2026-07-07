@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# zj — a thin wrapper around the `zellij` binary that strips Claude Code's
+# environment variables before invoking zellij.
+#
+# Why this exists:
+#   When Claude Code runs, it exports a set of marker variables (CLAUDE_*,
+#   CLAUDECODE, AI_AGENT). A Zellij *session* inherits the environment of the
+#   process that first started its server, and every pane and command Zellij
+#   later spawns inherits that same environment. If these markers leak into a
+#   session, any `claude` instance launched inside one of its panes sees them,
+#   believes it is a nested child session, and refuses to persist its own
+#   conversation history.
+#
+#   Stripping the variables here — at the single choke point every zellij-control
+#   skill goes through — guarantees sessions and panes start with a clean
+#   environment, no matter which zellij subcommand is being run.
+#
+# Usage: drop-in replacement for `zellij`. All arguments are passed through
+# unchanged, e.g.  zj action new-pane -- htop
+set -euo pipefail
+
+# Unset every Claude Code marker variable so it is not inherited by zellij or
+# anything it spawns. compgen -e lists only exported variable names.
+for _name in $(compgen -e); do
+  case "$_name" in
+    CLAUDE*|CLAUDECODE|AI_AGENT) unset "$_name" ;;
+  esac
+done
+
+exec zellij "$@"

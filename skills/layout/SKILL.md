@@ -2,7 +2,9 @@
 description: Create, edit, dump, save, or restore a Zellij layout. Author new layouts in KDL (tabs, panes, splits, commands, plugins, templates), snapshot the current session, or restore a layout from a file or KDL string.
 ---
 
-`$ARGUMENTS` describes what to do — create, edit, dump, save, or restore a layout. All commands accept an optional `zellij --session <name>` prefix to target a different session.
+> **Always run `zj`, never `zellij` directly.** `zj` is this plugin's wrapper (shipped in the plugin's `bin/`, already on your `PATH`). It clears Claude Code's `CLAUDE_*` / `CLAUDECODE` environment variables before invoking Zellij, so they are not inherited by the sessions and panes it spawns — otherwise a `claude` launched inside one of those panes would think it is a child process and refuse to keep its own history. The `zj` in the commands below is deliberate; do not substitute `zellij`.
+
+`$ARGUMENTS` describes what to do — create, edit, dump, save, or restore a layout. All commands accept an optional `zj --session <name>` prefix to target a different session.
 
 ## Creating or editing a layout
 
@@ -10,8 +12,8 @@ Layouts are written in KDL. **Before writing or modifying a layout, read [`refer
 
 Starting points:
 ```bash
-zellij setup --dump-layout default > layout.kdl   # default skeleton to edit
-zellij action dump-layout > layout.kdl            # snapshot the current session as a base
+zj setup --dump-layout default > layout.kdl   # default skeleton to edit
+zj action dump-layout > layout.kdl            # snapshot the current session as a base
 ```
 
 Then edit `layout.kdl` and apply it with `override-layout` (below), or launch a new session with it using the `new-session` skill (`--default-layout <layout.kdl>`).
@@ -22,7 +24,7 @@ For the complete, authoritative reference see <https://zellij.dev/documentation/
 
 Print the full session layout as a KDL string:
 ```bash
-zellij action dump-layout
+zj action dump-layout
 ```
 
 The output includes all tabs, panes, floating panes, plugin panes, and the `new_tab_template`. Present it to the user or save it to a file.
@@ -30,26 +32,26 @@ The output includes all tabs, panes, floating panes, plugin panes, and the `new_
 ## Save layout to a file
 
 ```bash
-zellij action dump-layout > <path/to/layout.kdl>
+zj action dump-layout > <path/to/layout.kdl>
 ```
 
 ## Restore a layout from a file
 
 Apply a saved layout file to the active tab:
 ```bash
-zellij action override-layout <path/to/layout.kdl>
+zj action override-layout <path/to/layout.kdl>
 ```
 
 Apply to the active tab only (ignores additional tabs in the layout file):
 ```bash
-zellij action override-layout --apply-only-to-active-tab <path/to/layout.kdl>
+zj action override-layout --apply-only-to-active-tab <path/to/layout.kdl>
 ```
 
 ## Restore a layout from a KDL string
 
 Useful when the layout was previously dumped and stored as a string rather than a file:
 ```bash
-zellij action override-layout --layout-string '<kdl string>'
+zj action override-layout --layout-string '<kdl string>'
 ```
 
 ## Restore options

@@ -2,6 +2,8 @@
 description: Send a prompt message to a Claude or Codex agent running in another Zellij session. Discovers agent panes automatically if no session/pane is specified.
 ---
 
+> **Always run `zj`, never `zellij` directly.** `zj` is this plugin's wrapper (shipped in the plugin's `bin/`, already on your `PATH`). It clears Claude Code's `CLAUDE_*` / `CLAUDECODE` environment variables before invoking Zellij, so they are not inherited by the sessions and panes it spawns — otherwise a `claude` launched inside one of those panes would think it is a child process and refuse to keep its own history. The `zj` in the commands below is deliberate; do not substitute `zellij`.
+
 `$ARGUMENTS` format: `[session-name] [pane-id] <message>`
 
 Parse heuristically:
@@ -15,13 +17,13 @@ Parse heuristically:
 If no session or pane was specified, locate agent panes across all sessions:
 
 ```bash
-zellij list-sessions -n
+zj list-sessions -n
 ```
 
 For each session returned, inspect its panes:
 
 ```bash
-zellij --session <name> action list-panes --json
+zj --session <name> action list-panes --json
 ```
 
 Parse the JSON and look for panes whose `title`, `command`, or `running_command` field contains `claude` or `codex` (case-insensitive). These are agent panes.
@@ -36,17 +38,17 @@ Once the target `<session-name>` and `<pane-id>` are confirmed:
 
 ```bash
 # Paste the message using bracketed paste (handles spaces, newlines, special characters)
-zellij --session <session-name> action paste -p <pane-id> "<message>"
+zj --session <session-name> action paste -p <pane-id> "<message>"
 
 # Submit it
-zellij --session <session-name> action send-keys -p <pane-id> "Enter"
+zj --session <session-name> action send-keys -p <pane-id> "Enter"
 ```
 
 For the current session (no session name needed), omit the `--session` flag:
 
 ```bash
-zellij action paste -p <pane-id> "<message>"
-zellij action send-keys -p <pane-id> "Enter"
+zj action paste -p <pane-id> "<message>"
+zj action send-keys -p <pane-id> "Enter"
 ```
 
 ## Step 3 — Watch the response (optional)
@@ -54,7 +56,7 @@ zellij action send-keys -p <pane-id> "Enter"
 After sending, ask the user whether to watch the agent's response. If yes, stream its pane output:
 
 ```bash
-zellij --session <session-name> subscribe --pane-id <pane-id> --format json \
+zj --session <session-name> subscribe --pane-id <pane-id> --format json \
   | jq -r --unbuffered 'if .event == "pane_closed" then "CLOSED: \(.pane_id)" else (.viewport | last) end'
 ```
 
@@ -63,7 +65,7 @@ Use the Monitor tool with a descriptive label (e.g. `"agent response in <session
 Alternatively, use `read-pane` for a one-shot snapshot of the current pane state:
 
 ```bash
-zellij --session <session-name> action dump-screen --pane-id <pane-id> --full
+zj --session <session-name> action dump-screen --pane-id <pane-id> --full
 ```
 
 ## Notes

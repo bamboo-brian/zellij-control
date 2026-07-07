@@ -2,19 +2,21 @@
 description: Create a new detached Zellij session running in the background. Optionally specify a layout, working directory, or shell. The session can then be targeted by other skills using its name.
 ---
 
+> **Always run `zj`, never `zellij` directly.** `zj` is this plugin's wrapper (shipped in the plugin's `bin/`, already on your `PATH`). It clears Claude Code's `CLAUDE_*` / `CLAUDECODE` environment variables before invoking Zellij, so they are not inherited by the sessions and panes it spawns — otherwise a `claude` launched inside one of those panes would think it is a child process and refuse to keep its own history. The `zj` in the commands below is deliberate; do not substitute `zellij`. This matters most here: the session's server inherits this environment and passes it to every pane it ever spawns.
+
 `$ARGUMENTS` is the session name, optionally followed by additional options.
 
 ## Basic usage
 
 Create a background session with a given name (no-op if it already exists):
 ```bash
-zellij attach --create-background <session-name>
+zj attach --create-background <session-name>
 ```
 
 ## With a layout
 
 ```bash
-zellij attach --create-background <session-name> options --default-layout <path/to/layout.kdl>
+zj attach --create-background <session-name> options --default-layout <path/to/layout.kdl>
 ```
 
 Use the `layout` skill to dump an existing session's layout to a file first if you want to replicate it.
@@ -22,13 +24,13 @@ Use the `layout` skill to dump an existing session's layout to a file first if y
 ## With a working directory or shell
 
 ```bash
-zellij attach --create-background <session-name> options --default-cwd <path>
-zellij attach --create-background <session-name> options --default-shell <shell>
+zj attach --create-background <session-name> options --default-cwd <path>
+zj attach --create-background <session-name> options --default-shell <shell>
 ```
 
 Options can be combined:
 ```bash
-zellij attach --create-background <session-name> options --default-layout <layout.kdl> --default-cwd <path>
+zj attach --create-background <session-name> options --default-layout <layout.kdl> --default-cwd <path>
 ```
 
 ## Notes

@@ -25,6 +25,8 @@ claude plugin validate
 zellij-control/
 ├── .claude-plugin/
 │   └── plugin.json       # Plugin identity, name, version, metadata
+├── bin/
+│   └── zj                # Wrapper around `zellij` — skills call this, never `zellij` directly
 ├── skills/
 │   └── <name>/
 │       └── SKILL.md      # One subdirectory per skill
@@ -34,6 +36,31 @@ zellij-control/
 ├── .mcp.json             # MCP server configurations (if needed)
 └── settings.json         # Default settings applied when plugin is enabled
 ```
+
+## The `zj` wrapper — do not call `zellij` directly
+
+**All skills invoke `zj` (in `bin/`), never the `zellij` binary directly.**
+
+When Claude Code runs, it exports marker environment variables (`CLAUDE_*`,
+`CLAUDECODE`, `AI_AGENT`). A Zellij *session* inherits the environment of the
+process that first started its server, and every pane and command that session
+later spawns inherits that same environment. If those markers leak into a
+session, any `claude` started inside one of its panes sees them, believes it is
+a nested child session, and refuses to persist its own conversation history.
+
+`bin/zj` is a drop-in `zellij` replacement that unsets every `CLAUDE*` /
+`AI_AGENT` variable and then `exec`s the real `zellij` with all arguments
+passed through. Routing every skill through this single choke point guarantees
+spawned sessions and panes start with a clean environment.
+
+Claude Code automatically adds each installed plugin's `bin/` directory to
+`PATH`, so skills can call `zj` as a bare command. `bin/zj` must stay
+executable (`chmod +x`); the executable bit is tracked in git.
+
+When adding or editing a skill, write `zj` in every command — never `zellij`.
+The only legitimate `zellij` references are non-command ones: the product name
+in prose, plugin locations like `zellij:status-bar` in layout KDL, and the
+`zellij.dev` documentation URL.
 
 **Critical layout rule:** `commands/`, `agents/`, `skills/`, and `hooks/` must sit at the plugin root — never inside `.claude-plugin/`. Only `plugin.json` goes inside `.claude-plugin/`.
 

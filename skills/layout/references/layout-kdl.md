@@ -3,7 +3,7 @@
 How to author and modify Zellij layouts in KDL. For the authoritative and complete
 reference see <https://zellij.dev/documentation/creating-a-layout.html>.
 
-Apply a finished layout with the `layout` skill (`zellij action override-layout
+Apply a finished layout with the `layout` skill (`zj action override-layout
 <file.kdl>`) or launch a session with it via the `new-session` skill
 (`--default-layout <file.kdl>`).
 
@@ -297,5 +297,5 @@ layout {
 Dump the default layout as a starting skeleton to edit:
 
 ```bash
-zellij setup --dump-layout default > /tmp/my-quickstart-layout-file.kdl
+zj setup --dump-layout default > /tmp/my-quickstart-layout-file.kdl
 ```

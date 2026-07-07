@@ -1,7 +1,7 @@
 {
   "name": "zellij-control",
   "description": "Control Zellij terminal multiplexer sessions from Claude Code",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Brian Hill"
   },
